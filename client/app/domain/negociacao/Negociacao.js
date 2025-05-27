@@ -1,11 +1,12 @@
+
 class Negociacao
 {
-    #data = new Date();
-    #quantidade = 1;
-    #valor = 0.0;
+    #data;
+    #quantidade;
+    #valor;
     constructor(data, quantidade, valor)
     {
-        this.#data = new Date(this.#data.getTime());
+        this.#data = new Date(data);
         this.#quantidade = quantidade;
         this.#valor = valor;
         Object.freeze(this);
