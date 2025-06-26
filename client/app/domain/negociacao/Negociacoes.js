@@ -1,18 +1,26 @@
-class Negociacoes
-{
-    #negociacoes = [];
+class Negociacoes {
+  _negociacoes = [];
+  #contexto;
+  #armadilha;
+  constructor() {
+    Object.freeze(this);
+  }
 
-    constructor(negociacoes)
-    {
-        negociacoes = this.#negociacoes;
-    }
+  adiciona(negociacao) {
+    this._negociacoes.push(negociacao);
+  }
+  get negociacoes() {
+    return [...this._negociacoes]; // retorna cópia para não permitir modificação externa
+  }
+  get volumeTotal() {
+    // iterar sobre o array negociações e somar o valor do volume
+    return this.negociacoes
+    .reduce((total, negociacao) => total + negociacao.volume, 0)
+  }
 
-    adiciona(negociacao)
-    {
-        this.negociacoes.push(negociacao);
-    }
-    get negociacoes()
-    {
-        return [].concat(this.#negociacoes);
-    }
+  esvazia()
+  {
+    this._negociacoes.length = 0;
+    Object.freeze(this);
+  }
 }
