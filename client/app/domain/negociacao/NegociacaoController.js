@@ -6,41 +6,36 @@ class NegociacaoController {
     this.inputQuantidade = $("#quantidade");
     this.inputValor = $("#valor");
 
-    // guardando referência da instância NegociaçãoController
-    const self = this;
-    this.negociacoes = new Proxy(new Negociacoes(), {
-      get(target, prop, receiver) {
-        if (
-          typeof target[prop] === typeof Function &&
-          ["adiciona", "esvazia"].includes(prop)
-        ) {
-          return function () {
-            console.log(`${prop} disparou a armadilha`);
-            target[prop].apply(target, arguments);
-            // target é a instância real de Negociações
-            self.negociacoesView.update(target);
-          };
-        } else {
-          return target[prop];
-        }
-      },
-    });
-
-    this.negociacoesView = new NegociacoesView("#negociacoes");
-
-    // instanciando modelo Mensagem
-    this.mensagem = new Mensagem();
-
-    this.mensagemView = new MensagemView("#mensagemView");
-    this.mensagemView.update(this.mensagem);
+    this.service = new NegociacaoService();
+    // Associando Modelo e View através de um Bind object, similar a mecanismos de Data Binding
+    this.negociacoes = new Bind(
+      new Negociacoes(), // Modelo
+      new NegociacoesView("#negociacoes"), // View
+      "adiciona",
+      "esvazia" // Métodos que o Proxy está observando
+    );
+    this.mensagem = new Bind(
+      new Mensagem(),
+      new MensagemView("#mensagemView"),
+      "texto"
+    );
   }
   adiciona(event) {
-    event.preventDefault();
-    // inclui a negociação
-    this.negociacoes.adiciona(this.criaNegociacao());
-    this.mensagem.texto = "Negociação adicionada com sucesso!";
-    this.mensagemView.update(this.mensagem);
-    this.limpaFormulario();
+    try {
+      event.preventDefault();
+      // inclui a negociação
+      this.negociacoes.adiciona(this.criaNegociacao());
+      this.mensagem.texto = "Negociação adicionada com sucesso!";
+      this.limpaFormulario();
+    } catch (err) {
+      console.log(err);
+      console.log(err.stack);
+
+      err instanceof DataInvalidaException
+        ? (this.mensagem.texto = err.message)
+        : (this.mensagem.texto =
+            "Um erro não esperado aconteceu, Entre em contato com o suporte");
+    }
   }
   // Reseta os inputs do formulário para seus placeholders
   limpaFormulario() {
@@ -60,6 +55,20 @@ class NegociacaoController {
   apaga() {
     this.negociacoes.esvazia();
     this.mensagem.texto = "Negociações apagadas com sucesso";
-    this.mensagemView.update(this.mensagem);
+  }
+
+  importaNegociacoes() {
+    this.service.obterNegociacoesDaSemana((err, negociacoes) => { // (err, negociacoes) é uma callback function
+      if(err)
+      {
+        this.mensagem.texto = "Não foi possível obter as negociações da semana"
+        return;
+      }
+
+      negociacoes.forEach(negociacao => {
+        this.negociacoes.adiciona(negociacao);
+      })
+      this.mensagem.texto = "Negociações importadas com sucesso"
+    });
   }
 }

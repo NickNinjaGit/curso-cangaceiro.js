@@ -1,13 +1,13 @@
 /* Código simplório, apenas para fornecer o serviço para a aplicação */
-var api = {}
+const api = {}
 
-var dataAtual = new Date();
-var dataAnterior = new Date();
+const dataAtual = new Date();
+const dataAnterior = new Date();
 dataAnterior.setDate(dataAtual.getDate() - 7);
-var dateRetrasada = new Date();
+const dateRetrasada = new Date();
 dateRetrasada.setDate(dataAtual.getDate() - 14);
 
-var negociacoes = [
+const negociacoes = [
       { data : dataAtual, quantidade : 1, valor : 150},
       { data : dataAtual, quantidade : 2, valor : 250},
       { data : dataAtual, quantidade : 3, valor : 350},
@@ -21,7 +21,7 @@ var negociacoes = [
 
 
 api.listaSemana = function(req, res) {
-    var negociacoesAtuais = negociacoes.filter(function(negociacao) {
+    const negociacoesAtuais = negociacoes.filter(function(negociacao) {
         return negociacao.data > dataAnterior;
     });
     res.json(negociacoesAtuais);
@@ -29,7 +29,7 @@ api.listaSemana = function(req, res) {
 
 api.listaAnterior = function(req, res) {
    
-   var negociacoesAnteriores = negociacoes.filter(function(negociacao) {
+   const negociacoesAnteriores = negociacoes.filter(function(negociacao) {
         return negociacao.data < dataAtual && negociacao.data > dateRetrasada;
     });
 	setTimeout(function() {
@@ -40,7 +40,7 @@ api.listaAnterior = function(req, res) {
 
 api.listaRetrasada = function(req, res) {
 
-   var negociacoesRtrasadas = negociacoes.filter(function(negociacao) {
+   const negociacoesRtrasadas = negociacoes.filter(function(negociacao) {
         return negociacao.data < dataAnterior;
     });
     res.json(negociacoesRtrasadas);
