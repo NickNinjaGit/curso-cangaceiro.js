@@ -9,12 +9,12 @@ class Negociacoes {
   adiciona(negociacao) {
     this._negociacoes.push(negociacao);
   }
-  get negociacoes() {
+  get negociacoesArr() {
     return [...this._negociacoes]; // retorna cópia para não permitir modificação externa
   }
   get volumeTotal() {
     // iterar sobre o array negociações e somar o valor do volume
-    return this.negociacoes
+    return this.negociacoesArr
     .reduce((total, negociacao) => total + negociacao.volume, 0)
   }
 

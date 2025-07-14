@@ -37,4 +37,25 @@ class NegociacaoService {
       }
     );
   }
+  obtemNegociacoesDoPeriodo() {
+    // RECEBE UM ARRAY DE PROMISES
+    return (
+      Promise.all([
+        this.obterNegociacoesDaSemana(),
+        this.obterNegociacoesDaSemanaAnterior(),
+        this.obterNegociacoesDaSemanaRetrasada(),
+      ])
+        // periodo é um arr de arrays que representam todos os dados coletados na ordem que foi chamado
+        // em Promise.all
+        .then((periodo) =>
+          periodo
+            .reduce((novoArr, item) => novoArr.concat(item), [])
+            .sort((a, b) => b.data.getTime() - a.data.getTime())
+        )
+        .catch((err) => {
+          console.log(err);
+          throw new Error("Não foi possível obter as negociações do periodo");
+        })
+    );
+  }
 }

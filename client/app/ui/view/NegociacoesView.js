@@ -12,7 +12,7 @@ class NegociacoesView extends View {
         </thead>
         
         <tbody>
-        ${model.negociacoes.map(negociacao => {
+        ${model.negociacoesArr.map(negociacao => {
             return `
             <tr>
                 <td>${DateConverter.paraTexto(negociacao.data)}</td>
