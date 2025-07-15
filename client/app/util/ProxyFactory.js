@@ -3,6 +3,7 @@ class ProxyFactory
     static create(objeto, props, armadilha)
     {
         return new Proxy(objeto, {
+            // Métodos de NegociacaoController
             get(target, prop, receiver) {
               if (
                 // target[prop] representa a propriedade que ele está acessando no momento
@@ -21,6 +22,7 @@ class ProxyFactory
                 return Reflect.get(target, prop, receiver);
               }
             },
+            // Mensagem
             set(target, prop, value, receiver)
             {
                 // atualiza as mudanças de maneira automática

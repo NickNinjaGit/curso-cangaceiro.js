@@ -19,14 +19,31 @@ class NegociacaoController {
       new MensagemView("#mensagemView"),
       "texto"
     );
+    this._init();
+  }
+  _init() {
+    // adiciona as negociações do banco na lista de negociações da table
+    DaoFactory
+    .getNegociacaoDao()
+      .then(dao => dao.listaTodos())
+      .then(negociacoes => 
+        negociacoes.forEach(negociacao => this.negociacoes.adiciona(negociacao)))
+      .catch(err => this.mensagem.texto = err);
   }
   adiciona(event) {
     try {
       event.preventDefault();
       // inclui a negociação
-      this.negociacoes.adiciona(this.criaNegociacao());
-      this.mensagem.texto = "Negociação adicionada com sucesso!";
-      this.limpaFormulario();
+      const negociacao = this.criaNegociacao();
+      // Dao Factory responsável por persistir os dados da negociação no IndexedDB
+      DaoFactory.getNegociacaoDao()
+        .then((dao) => dao.adiciona(negociacao))
+        .then(() => {
+          // só tentará incluir na tabela se conseguiu antes incluir no banco
+          this.negociacoes.adiciona(negociacao);
+          this.mensagem.texto = "Negociação adicionada com sucesso!";
+          this.limpaFormulario();
+        });
     } catch (err) {
       console.log(err);
       console.log(err.stack);
@@ -53,12 +70,15 @@ class NegociacaoController {
     );
   }
   apaga() {
-    this.negociacoes.esvazia();
-    this.mensagem.texto = "Negociações apagadas com sucesso";
+    DaoFactory.getNegociacaoDao().then(dao => dao.apagaTodos()).then(() => {
+      this.negociacoes.esvazia();
+      this.mensagem.texto = "Negociações apagadas com sucesso";
+    }).catch(err => this.mensagem.texto = err);
+   
   }
 
   importaNegociacoes() {
-    this.service 
+    this.service
       .obtemNegociacoesDoPeriodo()
       .then((negociacoes) => {
         negociacoes
