@@ -23,8 +23,7 @@ class NegociacaoController {
   }
   _init() {
     // adiciona as negociações do banco na lista de negociações da table
-    DaoFactory
-    .getNegociacaoDao()
+    getNegociacaoDao()
       .then(dao => dao.listaTodos())
       .then(negociacoes => 
         negociacoes.forEach(negociacao => this.negociacoes.adiciona(negociacao)))
@@ -36,7 +35,7 @@ class NegociacaoController {
       // inclui a negociação
       const negociacao = this.criaNegociacao();
       // Dao Factory responsável por persistir os dados da negociação no IndexedDB
-      DaoFactory.getNegociacaoDao()
+      getNegociacaoDao()
         .then((dao) => dao.adiciona(negociacao))
         .then(() => {
           // só tentará incluir na tabela se conseguiu antes incluir no banco
@@ -70,7 +69,7 @@ class NegociacaoController {
     );
   }
   apaga() {
-    DaoFactory.getNegociacaoDao().then(dao => dao.apagaTodos()).then(() => {
+    getNegociacaoDao().then(dao => dao.apagaTodos()).then(() => {
       this.negociacoes.esvazia();
       this.mensagem.texto = "Negociações apagadas com sucesso";
     }).catch(err => this.mensagem.texto = err);
