@@ -1,15 +1,12 @@
-import { Negociacoes } from "../negociacao/Negociacoes.js";
-
-import { NegociacoesView } from "../../ui/view/NegociacoesView.js";
-
-import { Mensagem } from "../../ui/models/Mensagem.js";
-import { MensagemView } from "../../ui/view/MensagemView.js";
-import { NegociacaoService } from "../negociacao/NegociacaoService.js";
-import { getNegociacaoDao } from "../../util/DaoFactory.js";
-import { DataInvalidaException } from "../../ui/converters/DataInvalidaException.js";
-import { Negociacao } from "../negociacao/Negociacao.js";
-import { Bind } from "../../util/Bind.js";
-import { DateConverter } from "../../ui/converters/DateConverter.js";
+import { Negociacoes, NegociacaoService, Negociacao } from "../index.js";
+import {
+  NegociacoesView,
+  MensagemView,
+  Mensagem,
+  DataInvalidaException,
+  DateConverter,
+} from "../../ui/index.js";
+import { getNegociacaoDao, Bind } from "../../util/index.js";
 export class NegociacaoController {
   constructor() {
     // bind serve para dar contexto a uma função que fica separada de seu objeto
