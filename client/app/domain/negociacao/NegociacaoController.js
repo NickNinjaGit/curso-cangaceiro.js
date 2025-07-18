@@ -1,4 +1,16 @@
-class NegociacaoController {
+import { Negociacoes } from "../negociacao/Negociacoes.js";
+
+import { NegociacoesView } from "../../ui/view/NegociacoesView.js";
+
+import { Mensagem } from "../../ui/models/Mensagem.js";
+import { MensagemView } from "../../ui/view/MensagemView.js";
+import { NegociacaoService } from "../negociacao/NegociacaoService.js";
+import { getNegociacaoDao } from "../../util/DaoFactory.js";
+import { DataInvalidaException } from "../../ui/converters/DataInvalidaException.js";
+import { Negociacao } from "../negociacao/Negociacao.js";
+import { Bind } from "../../util/Bind.js";
+import { DateConverter } from "../../ui/converters/DateConverter.js";
+export class NegociacaoController {
   constructor() {
     // bind serve para dar contexto a uma função que fica separada de seu objeto
     const $ = document.querySelector.bind(document);
@@ -24,10 +36,13 @@ class NegociacaoController {
   _init() {
     // adiciona as negociações do banco na lista de negociações da table
     getNegociacaoDao()
-      .then(dao => dao.listaTodos())
-      .then(negociacoes => 
-        negociacoes.forEach(negociacao => this.negociacoes.adiciona(negociacao)))
-      .catch(err => this.mensagem.texto = err);
+      .then((dao) => dao.listaTodos())
+      .then((negociacoes) =>
+        negociacoes.forEach((negociacao) =>
+          this.negociacoes.adiciona(negociacao)
+        )
+      )
+      .catch((err) => (this.mensagem.texto = err));
   }
   adiciona(event) {
     try {
@@ -69,11 +84,13 @@ class NegociacaoController {
     );
   }
   apaga() {
-    getNegociacaoDao().then(dao => dao.apagaTodos()).then(() => {
-      this.negociacoes.esvazia();
-      this.mensagem.texto = "Negociações apagadas com sucesso";
-    }).catch(err => this.mensagem.texto = err);
-   
+    getNegociacaoDao()
+      .then((dao) => dao.apagaTodos())
+      .then(() => {
+        this.negociacoes.esvazia();
+        this.mensagem.texto = "Negociações apagadas com sucesso";
+      })
+      .catch((err) => (this.mensagem.texto = err));
   }
 
   importaNegociacoes() {

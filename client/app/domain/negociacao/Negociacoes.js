@@ -1,4 +1,4 @@
-class Negociacoes {
+export class Negociacoes {
   _negociacoes = [];
   #contexto;
   #armadilha;
@@ -14,12 +14,13 @@ class Negociacoes {
   }
   get volumeTotal() {
     // iterar sobre o array negociações e somar o valor do volume
-    return this.negociacoesArr
-    .reduce((total, negociacao) => total + negociacao.volume, 0)
+    return this.negociacoesArr.reduce(
+      (total, negociacao) => total + negociacao.volume,
+      0
+    );
   }
 
-  esvazia()
-  {
+  esvazia() {
     this._negociacoes.length = 0;
     Object.freeze(this);
   }
