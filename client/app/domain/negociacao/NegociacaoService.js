@@ -62,8 +62,9 @@ export class NegociacaoService {
       }
     );
   }
-  obtemNegociacoesDoPeriodo() {
-    // RECEBE UM ARRAY DE PROMISES
+  async obtemNegociacoesDoPeriodo() {
+    try {
+       // RECEBE UM ARRAY DE PROMISES
     return (
       Promise.all([
         this.obterNegociacoesDaSemana(),
@@ -82,5 +83,10 @@ export class NegociacaoService {
           throw new Error("Não foi possível obter as negociações do periodo");
         })
     );
+    } catch(err) {
+      console.log(err);
+      throw new Error("Não foi possível obter as negociações do período")
+    }
+   
   }
 }

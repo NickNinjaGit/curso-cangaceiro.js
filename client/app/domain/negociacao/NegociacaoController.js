@@ -30,31 +30,44 @@ export class NegociacaoController {
     );
     this._init();
   }
-  _init() {
+  async _init() {
+    try {
+      const dao = await getNegociacaoDao();
+      const negociacoes = await dao.listaTodos();
+      negociacoes.forEach(negociacao => this.negociacoes.adiciona(negociacao));
+    } catch (err) {
+      this.mensagem.texto = err.message;
+    }
     // adiciona as negociações do banco na lista de negociações da table
-    getNegociacaoDao()
+    // CÓDIGO SEM ASYNC AWAIT; MENOS LEGÍVEL MAIS COMPLEXO.
+    /*getNegociacaoDao()
       .then((dao) => dao.listaTodos())
       .then((negociacoes) =>
         negociacoes.forEach((negociacao) =>
           this.negociacoes.adiciona(negociacao)
         )
       )
-      .catch((err) => (this.mensagem.texto = err));
+      .catch((err) => (this.mensagem.texto = err));*/
   }
-  adiciona(event) {
+  async adiciona(event) {
     try {
       event.preventDefault();
       // inclui a negociação
       const negociacao = this.criaNegociacao();
       // Dao Factory responsável por persistir os dados da negociação no IndexedDB
-      getNegociacaoDao()
+      const dao = await getNegociacaoDao();
+      await dao.adiciona(negociacao);
+      this.mensagem.texto = "Negociacão adicionada com sucesso";
+      this.limpaFormulario();
+      //CÓDIGO ANTIGO SEM ASYNC AWAIT.
+      /*getNegociacaoDao()
         .then((dao) => dao.adiciona(negociacao))
         .then(() => {
           // só tentará incluir na tabela se conseguiu antes incluir no banco
           this.negociacoes.adiciona(negociacao);
           this.mensagem.texto = "Negociação adicionada com sucesso!";
           this.limpaFormulario();
-        });
+        });*/
     } catch (err) {
       console.log(err);
       console.log(err.stack);
@@ -80,18 +93,35 @@ export class NegociacaoController {
       parseFloat(this.inputValor.value)
     );
   }
-  apaga() {
-    getNegociacaoDao()
+  async apaga() {
+    const dao = await getNegociacaoDao();
+    await dao.apagaTodos();
+    this.negociacoes.esvazia();
+    this.mensagem.texto = "Negociacoes apagadas com sucesso";
+    /*getNegociacaoDao()
       .then((dao) => dao.apagaTodos())
       .then(() => {
         this.negociacoes.esvazia();
         this.mensagem.texto = "Negociações apagadas com sucesso";
       })
-      .catch((err) => (this.mensagem.texto = err));
+      .catch((err) => (this.mensagem.texto = err));*/
   }
 
-  importaNegociacoes() {
-    this.service
+  async importaNegociacoes() {
+    try {
+      const negociacoes = await this.service.obtemNegociacoesDoPeriodo();
+    console.log(negociacoes);
+    negociacoes
+    .filter(
+      (novaNegociacao) =>
+        !this.negociacoes.negociacoesArr.some((negociacaoExistente) =>
+          novaNegociacao.equals(negociacaoExistente)
+        )
+    )
+    .forEach((negociacao) => this.negociacoes.adiciona(negociacao));
+    this.mensagem.texto = "Negociações do período importadas com sucesso!";
+    // CÓDIGO SEM ASYNC AWAIT
+    /*this.service
       .obtemNegociacoesDoPeriodo()
       .then((negociacoes) => {
         negociacoes
@@ -103,7 +133,7 @@ export class NegociacaoController {
           )
           .forEach((negociacao) => this.negociacoes.adiciona(negociacao));
         this.mensagem.texto = "Negociações importadas com sucesso!";
-      })
-      .catch((err) => (this.mensagem.texto = err));
+      })*/
+    } catch(err) { (this.mensagem.texto = err.message) };
   }
 }
